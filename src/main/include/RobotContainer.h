@@ -17,6 +17,9 @@
 
 #include "Constants.h"
 
+#include "commands/servo/Press.h"
+#include "commands/servo/Release.h"
+
 #include "subsystems/DriveSubsystem.h"
 #include "subsystems/EjectionSubsystem.h"
 #include "subsystems/AscensionSubsystem.h"
@@ -32,6 +35,7 @@ class RobotContainer
 public:
 	RobotContainer();
 
+	void ResetServosOnInit();
 	Command *GetAutonomousCommand();
 
 private:
@@ -43,7 +47,12 @@ private:
 	GatheringSubsystem m_gatheringSubsystem;
 	TelescopeSubsystem m_telescopeSubsystem{&m_controller};
 
+	Press m_servoPressCommand{&m_gatheringSubsystem};
+	Release m_servoReleaseCommand{&m_gatheringSubsystem};
+
 	SendableChooser<Command *> m_chooser;
+
+	bool m_toggleServo = true;
 
 	void ConfigureAutonomous();
 	void ConfigureButtonBindings();

@@ -7,24 +7,27 @@
 
 #pragma once
 
-#include <frc/PWMVictorSPX.h>
-#include <frc2/command/SubsystemBase.h>
+#include <frc2/command/CommandBase.h>
+#include <frc2/command/CommandHelper.h>
 
 #include "Constants.h"
 
-using namespace ac;
+#include "subsystems/GatheringSubsystem.h"
+
+using namespace gc;
 using namespace frc;
 using namespace frc2;
 
-class AscensionSubsystem : public SubsystemBase
+class Release : public CommandHelper<CommandBase, Release>
 {
 public:
-	AscensionSubsystem();
+	Release(GatheringSubsystem *subsystem);
 
-	void Ascend();
-	void Descend();
-	void Stop();
+	void Initialize() override;
+	void Execute() override;
+	void End(bool interrupted) override;
+	bool IsFinished() override;
 
 private:
-	PWMVictorSPX m_motor{MOTOR_ASCENSION};
+	GatheringSubsystem *m_subsystem;
 };

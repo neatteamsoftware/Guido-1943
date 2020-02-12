@@ -11,5 +11,5 @@ TelescopeSubsystem::TelescopeSubsystem(XboxController *controller) : m_controlle
 
 void TelescopeSubsystem::Run()
 {
-	m_motor.Set(m_controller->GetY(GenericHID::JoystickHand::kRightHand));
+	m_motor.Set(m_controller->GetY(GenericHID::JoystickHand::kRightHand) * 0.5);
 }

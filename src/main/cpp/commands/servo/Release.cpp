@@ -5,26 +5,22 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-#pragma once
+#include "commands/servo/Release.h"
 
-#include <frc/PWMVictorSPX.h>
-#include <frc2/command/SubsystemBase.h>
-
-#include "Constants.h"
-
-using namespace ac;
-using namespace frc;
-using namespace frc2;
-
-class AscensionSubsystem : public SubsystemBase
+Release::Release(GatheringSubsystem *subsystem) : m_subsystem{subsystem}
 {
-public:
-	AscensionSubsystem();
+}
 
-	void Ascend();
-	void Descend();
-	void Stop();
+void Release::Initialize() {}
 
-private:
-	PWMVictorSPX m_motor{MOTOR_ASCENSION};
-};
+void Release::Execute()
+{
+	m_subsystem->ReleaseServos();
+}
+
+void Release::End(bool interrupted)
+{
+	m_subsystem->StopServos();
+}
+
+bool Release::IsFinished() { return m_subsystem->IsServoFinished(SERVO_STATE_RELEASE); }

@@ -5,26 +5,22 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-#pragma once
+#include "commands/servo/Press.h"
 
-#include <frc/PWMVictorSPX.h>
-#include <frc2/command/SubsystemBase.h>
-
-#include "Constants.h"
-
-using namespace ac;
-using namespace frc;
-using namespace frc2;
-
-class AscensionSubsystem : public SubsystemBase
+Press::Press(GatheringSubsystem *subsystem) : m_subsystem{subsystem}
 {
-public:
-	AscensionSubsystem();
+}
 
-	void Ascend();
-	void Descend();
-	void Stop();
+void Press::Initialize() {}
 
-private:
-	PWMVictorSPX m_motor{MOTOR_ASCENSION};
-};
+void Press::Execute()
+{
+	m_subsystem->PressServos();
+}
+
+void Press::End(bool interrupted)
+{
+	m_subsystem->StopServos();
+}
+
+bool Press::IsFinished() { return m_subsystem->IsServoFinished(SERVO_STATE_PRESS); }

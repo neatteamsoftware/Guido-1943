@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <frc/Servo.h>
 #include <frc/PWMVictorSPX.h>
 #include <frc/XboxController.h>
 #include <frc2/command/SubsystemBase.h>
@@ -21,10 +22,19 @@ class GatheringSubsystem : public SubsystemBase
 {
 public:
 	GatheringSubsystem();
+
 	void TakeIn();
 	void TakeOut();
 	void Stop();
 
+	void StopServos();
+	void PressServos();
+	void ReleaseServos();
+	bool IsServoFinished(int state);
+
 private:
+	Servo m_servoLeft{SERVO_PORTS[0]};
+	Servo m_servoRight{SERVO_PORTS[1]};
+
 	PWMVictorSPX m_motor{MOTOR_GATHERING};
 };

@@ -19,6 +19,9 @@ constexpr int BTN_Y = 4;
 constexpr int BUMPER_LEFT = 5;
 constexpr int BUMPER_RIGHT = 6;
 
+constexpr int BTN_HOME = 7;
+constexpr int BTN_MENU = 8;
+
 constexpr int BTN_LEFT_STICK = 9;
 constexpr int BTN_RIGHT_STICK = 10;
 } // namespace ioc
@@ -32,6 +35,8 @@ constexpr int MOTORS_RIGHT = 1;
 namespace ec
 {
 constexpr int MOTOR_EJECTION = 2;
+constexpr int MOTOR_GRIPPERS_LEFT = 6;
+constexpr int MOTOR_GRIPPERS_RIGHT = 7;
 } // namespace ec
 
 namespace tc
@@ -47,4 +52,7 @@ constexpr int MOTOR_ASCENSION = 4;
 namespace gc
 {
 constexpr int MOTOR_GATHERING = 5;
+constexpr int SERVO_PORTS[] = {8, 9};
+constexpr int SERVO_STATE_PRESS = 0;
+constexpr int SERVO_STATE_RELEASE = 1;
 } // namespace gc

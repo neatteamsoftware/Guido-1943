@@ -6,6 +6,8 @@
 /*----------------------------------------------------------------------------*/
 
 #include "RobotContainer.h"
+#include <iostream>
+using namespace std;
 
 RobotContainer::RobotContainer()
 {
@@ -26,11 +28,23 @@ void RobotContainer::ConfigureButtonBindings()
 	JoystickButton btnB{&m_controller, BTN_B};
 	JoystickButton btnX{&m_controller, BTN_X};
 	JoystickButton btnY{&m_controller, BTN_Y};
-	JoystickButton bumperLeft{&m_controller, BUMPER_LEFT};
-	JoystickButton bumperRight{&m_controller, BUMPER_RIGHT};
+	JoystickButton btnHome{&m_controller, BTN_HOME};
 
-	btnA.WhileHeld([this] { m_gatheringSubsystem.TakeIn(); }).WhenReleased([this] { m_gatheringSubsystem.Stop(); });
-	btnA.WhileHeld([this] { m_gatheringSubsystem.TakeOut(); }).WhenReleased([this] { m_gatheringSubsystem.Stop(); });
+	btnA.WhenPressed([this] {
+			m_servoPressCommand.Cancel();
+			m_servoReleaseCommand.Schedule();
+		})
+		.WhileHeld([this] { m_gatheringSubsystem.TakeIn(); })
+		.WhenReleased([this] {
+			m_gatheringSubsystem.Stop();
+			m_servoPressCommand.Schedule();
+			m_servoReleaseCommand.Cancel();
+		});
+
+	btnB.WhileHeld([this] { m_gatheringSubsystem.TakeOut(); }).WhenReleased([this] { m_gatheringSubsystem.Stop(); });
+
+	btnY.WhileHeld([this] { m_ascensionSubsystem.Ascend(); }).WhenReleased([this] { m_ascensionSubsystem.Stop(); });
+	btnHome.WhileHeld([this] { m_ascensionSubsystem.Descend(); }).WhenReleased([this] { m_ascensionSubsystem.Stop(); });
 }
 
 void RobotContainer::ConfigureCommands()
@@ -38,6 +52,12 @@ void RobotContainer::ConfigureCommands()
 	m_driveSubsystem.SetDefaultCommand(RunCommand([this] { m_driveSubsystem.ArcadeDrive(); }, {&m_driveSubsystem}));
 	m_ejectionSubsystem.SetDefaultCommand(RunCommand([this] { m_ejectionSubsystem.Run(); }, {&m_ejectionSubsystem}));
 	m_telescopeSubsystem.SetDefaultCommand(RunCommand([this] { m_telescopeSubsystem.Run(); }, {&m_telescopeSubsystem}));
+}
+
+void RobotContainer::ResetServosOnInit()
+{
+	m_servoPressCommand.Cancel();
+	m_servoReleaseCommand.Schedule();
 }
 
 Command *RobotContainer::GetAutonomousCommand()

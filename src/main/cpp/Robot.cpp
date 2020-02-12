@@ -10,11 +10,17 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc2/command/CommandScheduler.h>
 
-void Robot::RobotInit() {}
+void Robot::RobotInit()
+{
+	m_container.ResetServosOnInit();
+}
 
 void Robot::RobotPeriodic() { CommandScheduler::GetInstance().Run(); }
 
-void Robot::DisabledInit() {}
+void Robot::DisabledInit()
+{
+	m_container.ResetServosOnInit();
+}
 
 void Robot::DisabledPeriodic() {}
 

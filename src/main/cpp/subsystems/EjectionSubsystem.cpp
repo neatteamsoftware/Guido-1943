@@ -11,6 +11,19 @@ EjectionSubsystem::EjectionSubsystem(XboxController *controller) : m_controller{
 
 void EjectionSubsystem::Run()
 {
-	m_motor.Set(m_controller->GetTriggerAxis(GenericHID::JoystickHand::kRightHand) -
-				m_controller->GetTriggerAxis(GenericHID::JoystickHand::kLeftHand));
+	double power = m_controller->GetTriggerAxis(GenericHID::JoystickHand::kRightHand) -
+				   m_controller->GetTriggerAxis(GenericHID::JoystickHand::kLeftHand);
+
+	m_motorStrip.Set(power);
+
+	if (power >= 0.5)
+	{
+		m_motorGripperLeft.Set(1);
+		m_motorGripperRight.Set(1);
+	}
+	else
+	{
+		m_motorGripperLeft.Set(0);
+		m_motorGripperRight.Set(0);
+	}
 }

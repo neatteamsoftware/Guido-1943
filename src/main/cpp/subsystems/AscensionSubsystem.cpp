@@ -8,3 +8,18 @@
 #include "subsystems/AscensionSubsystem.h"
 
 AscensionSubsystem::AscensionSubsystem() {}
+
+void AscensionSubsystem::Ascend()
+{
+	m_motor.Set(1);
+}
+
+void AscensionSubsystem::Descend()
+{
+	m_motor.Set(-1);
+}
+
+void AscensionSubsystem::Stop()
+{
+	m_motor.Set(0);
+}

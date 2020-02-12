@@ -25,5 +25,8 @@ public:
 
 private:
 	XboxController *m_controller;
-	PWMVictorSPX m_motor{MOTOR_EJECTION};
+
+	PWMVictorSPX m_motorStrip{MOTOR_EJECTION};
+	PWMVictorSPX m_motorGripperLeft{MOTOR_GRIPPERS_LEFT};
+	PWMVictorSPX m_motorGripperRight{MOTOR_GRIPPERS_RIGHT};
 };
