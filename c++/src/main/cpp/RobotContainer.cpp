@@ -33,16 +33,31 @@ void RobotContainer::ConfigureButtonBindings()
 	btnA.WhenPressed([this] {
 			m_servoPressCommand.Cancel();
 			m_servoReleaseCommand.Schedule();
+			m_toggleServo = true;
 		})
 		.WhileHeld([this] { m_gatheringSubsystem.TakeIn(); })
 		.WhenReleased([this] {
 			m_gatheringSubsystem.Stop();
 			m_servoPressCommand.Schedule();
 			m_servoReleaseCommand.Cancel();
+			m_toggleServo = false;
 		});
 
 	btnB.WhileHeld([this] { m_gatheringSubsystem.TakeOut(); }).WhenReleased([this] { m_gatheringSubsystem.Stop(); });
-
+	btnX.WhileHeld([this] {
+		if (m_toggleServo)
+		{
+			m_servoPressCommand.Schedule();
+			m_servoReleaseCommand.Cancel();
+			m_toggleServo = false;
+		}
+		else
+		{
+			m_servoPressCommand.Cancel();
+			m_servoReleaseCommand.Schedule();
+			m_toggleServo = true;
+		}
+	});
 	btnY.WhileHeld([this] { m_ascensionSubsystem.Ascend(); }).WhenReleased([this] { m_ascensionSubsystem.Stop(); });
 	btnHome.WhileHeld([this] { m_ascensionSubsystem.Descend(); }).WhenReleased([this] { m_ascensionSubsystem.Stop(); });
 }

@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <frc/Timer.h>
+#include <frc/TimedRobot.h>
 #include <frc2/command/CommandBase.h>
 #include <frc2/command/CommandHelper.h>
 
@@ -18,7 +20,7 @@ using namespace gc;
 using namespace frc;
 using namespace frc2;
 
-class Press : public CommandHelper<CommandBase, Press>
+class Press : public CommandHelper<CommandBase, Press>, frc::TimedRobot
 {
 public:
 	Press(GatheringSubsystem *subsystem);
@@ -30,4 +32,5 @@ public:
 
 private:
 	GatheringSubsystem *m_subsystem;
+	frc::Timer m_timer;
 };

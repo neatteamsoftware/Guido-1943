@@ -11,11 +11,18 @@ Press::Press(GatheringSubsystem *subsystem) : m_subsystem{subsystem}
 {
 }
 
-void Press::Initialize() {}
+void Press::Initialize()
+{
+	m_timer.Reset();
+	m_timer.Start();
+}
 
 void Press::Execute()
 {
-	m_subsystem->PressServos();
+	if (m_timer.Get() > 2.0)
+	{
+		m_subsystem->PressServos();
+	}
 }
 
 void Press::End(bool interrupted)

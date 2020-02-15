@@ -17,12 +17,12 @@ GatheringSubsystem::GatheringSubsystem()
 
 void GatheringSubsystem::TakeIn()
 {
-	m_motor.Set(-0.75);
+	m_motor.Set(-0.5);
 }
 
 void GatheringSubsystem::TakeOut()
 {
-	m_motor.Set(0.75);
+	m_motor.Set(0.5);
 }
 
 void GatheringSubsystem::Stop()
@@ -39,7 +39,7 @@ void GatheringSubsystem::StopServos()
 void GatheringSubsystem::PressServos()
 {
 	m_servoLeft.Set(0.7);
-	m_servoRight.Set(0.7);
+	m_servoRight.Set(0.6);
 }
 
 void GatheringSubsystem::ReleaseServos()
