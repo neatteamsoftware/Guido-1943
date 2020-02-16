@@ -1,3 +1,4 @@
+
 package frc.robot.subsystems;
 
 
@@ -38,7 +39,7 @@ public class GatheringSubsystem extends SubsystemBase {
 
     public void pressServos() {
         servoLeft.set(0.7);
-        servoRight.set(0.6);
+        servoRight.set(0.65);
     }
 
     public void releaseServos() {

@@ -22,9 +22,10 @@ public class EjectionSubsystem extends SubsystemBase {
     }
 
     public void run() {
+
         XboxController controller = RobotContainer.getController();
         double power = controller.getTriggerAxis(Hand.kRight) - controller.getTriggerAxis(Hand.kLeft);
-        motorStrip.set(power * 0.75);
+        motorStrip.set(power * 0.85);
 
         if (power >= 0.5) {
             motorGripperLeft.set(1.0);
