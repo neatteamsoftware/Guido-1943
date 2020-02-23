@@ -6,11 +6,18 @@
 /*----------------------------------------------------------------------------*/
 
 #include "RobotContainer.h"
-#include <iostream>
-using namespace std;
 
 RobotContainer::RobotContainer()
+	: m_controller{ioc::kControllerPort},
+	  m_driveSubsystem{&m_controller},
+	  m_ejectionSubsystem{&m_controller},
+	  m_telescopeSubsystem{&m_controller},
+	  m_servoPressCommand{&m_gatheringSubsystem},
+	  m_servoReleaseCommand{&m_gatheringSubsystem}
 {
+	frc::CameraServer::GetInstance()->StartAutomaticCapture(0);
+	frc::CameraServer::GetInstance()->StartAutomaticCapture(1);
+
 	ConfigureAutonomous();
 	ConfigureButtonBindings();
 	ConfigureCommands();
@@ -19,23 +26,33 @@ RobotContainer::RobotContainer()
 void RobotContainer::ConfigureAutonomous()
 {
 	m_chooser.AddOption("No Autonomous", nullptr);
-	Shuffleboard::GetTab("Autonomous").Add(m_chooser);
+	m_chooser.AddOption("Line", new frc2::ParallelCommandGroup(DriveTimeCommand(&m_driveSubsystem, 1.0, true),
+															   DropGrippersCommand(&m_gatheringSubsystem)));
+	m_chooser.AddOption("Line & Eject", new frc2::SequentialCommandGroup(
+											frc2::ParallelCommandGroup(DriveTimeCommand(&m_driveSubsystem, 2.0, false),
+																	   DropGrippersCommand(&m_gatheringSubsystem)),
+											EjectCommand(&m_ejectionSubsystem),
+											DriveTimeCommand(&m_driveSubsystem, 2.0, true)));
+
+	frc::Shuffleboard::GetTab("Autonomous").Add(m_chooser);
 }
 
 void RobotContainer::ConfigureButtonBindings()
 {
-	JoystickButton btnA{&m_controller, BTN_A};
-	JoystickButton btnB{&m_controller, BTN_B};
-	JoystickButton btnX{&m_controller, BTN_X};
-	JoystickButton btnY{&m_controller, BTN_Y};
-	JoystickButton btnHome{&m_controller, BTN_HOME};
+	frc2::JoystickButton btnA{&m_controller, ioc::kBtnA};
+	frc2::JoystickButton btnB{&m_controller, ioc::kBtnB};
+	frc2::JoystickButton btnX{&m_controller, ioc::kBtnX};
+	frc2::JoystickButton btnY{&m_controller, ioc::kBtnY};
+	frc2::JoystickButton btnHome{&m_controller, ioc::kBtnHome};
 
 	btnA.WhenPressed([this] {
 			m_servoPressCommand.Cancel();
 			m_servoReleaseCommand.Schedule();
 			m_toggleServo = true;
 		})
-		.WhileHeld([this] { m_gatheringSubsystem.TakeIn(); })
+		.WhileHeld([this] {
+			m_gatheringSubsystem.TakeIn();
+		})
 		.WhenReleased([this] {
 			m_gatheringSubsystem.Stop();
 			m_servoPressCommand.Schedule();
@@ -44,7 +61,8 @@ void RobotContainer::ConfigureButtonBindings()
 		});
 
 	btnB.WhileHeld([this] { m_gatheringSubsystem.TakeOut(); }).WhenReleased([this] { m_gatheringSubsystem.Stop(); });
-	btnX.WhileHeld([this] {
+
+	btnX.WhenPressed([this] {
 		if (m_toggleServo)
 		{
 			m_servoPressCommand.Schedule();
@@ -58,24 +76,29 @@ void RobotContainer::ConfigureButtonBindings()
 			m_toggleServo = true;
 		}
 	});
-	btnY.WhileHeld([this] { m_ascensionSubsystem.Ascend(); }).WhenReleased([this] { m_ascensionSubsystem.Stop(); });
-	btnHome.WhileHeld([this] { m_ascensionSubsystem.Descend(); }).WhenReleased([this] { m_ascensionSubsystem.Stop(); });
+
+	btnY.WhileHeld([this] {
+			m_ascensionSubsystem.Ascend();
+		})
+		.WhenReleased([this] {
+			m_ascensionSubsystem.Stop();
+		});
+	btnHome.WhileHeld([this] {
+			   m_ascensionSubsystem.Descend();
+		   })
+		.WhenReleased([this] {
+			m_ascensionSubsystem.Stop();
+		});
 }
 
 void RobotContainer::ConfigureCommands()
 {
-	m_driveSubsystem.SetDefaultCommand(RunCommand([this] { m_driveSubsystem.ArcadeDrive(); }, {&m_driveSubsystem}));
-	m_ejectionSubsystem.SetDefaultCommand(RunCommand([this] { m_ejectionSubsystem.Run(); }, {&m_ejectionSubsystem}));
-	m_telescopeSubsystem.SetDefaultCommand(RunCommand([this] { m_telescopeSubsystem.Run(); }, {&m_telescopeSubsystem}));
+	m_driveSubsystem.SetDefaultCommand(frc2::RunCommand([this] { m_driveSubsystem.ArcadeDrive(); }, {&m_driveSubsystem}));
+	m_ejectionSubsystem.SetDefaultCommand(frc2::RunCommand([this] { m_ejectionSubsystem.Run(); }, {&m_ejectionSubsystem}));
+	m_telescopeSubsystem.SetDefaultCommand(frc2::RunCommand([this] { m_telescopeSubsystem.Run(); }, {&m_telescopeSubsystem}));
 }
 
-void RobotContainer::ResetServosOnInit()
-{
-	m_servoPressCommand.Cancel();
-	m_servoReleaseCommand.Schedule();
-}
-
-Command *RobotContainer::GetAutonomousCommand()
+frc2::Command *RobotContainer::GetAutonomousCommand()
 {
 	return m_chooser.GetSelected();
 }

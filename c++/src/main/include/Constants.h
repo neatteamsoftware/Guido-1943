@@ -9,50 +9,47 @@
 
 namespace ioc
 {
-constexpr int CONTROLLER_PORT = 0;
+constexpr int kControllerPort = 0;
 
-constexpr int BTN_A = 1;
-constexpr int BTN_B = 2;
-constexpr int BTN_X = 3;
-constexpr int BTN_Y = 4;
+constexpr int kBtnA = 1;
+constexpr int kBtnB = 2;
+constexpr int kBtnX = 3;
+constexpr int kBtnY = 4;
 
-constexpr int BUMPER_LEFT = 5;
-constexpr int BUMPER_RIGHT = 6;
+constexpr int kBumperLeft = 5;
+constexpr int kBumperRight = 6;
 
-constexpr int BTN_HOME = 7;
-constexpr int BTN_MENU = 8;
+constexpr int kBtnHome = 7;
+constexpr int kBtnMenu = 8;
 
-constexpr int BTN_LEFT_STICK = 9;
-constexpr int BTN_RIGHT_STICK = 10;
+constexpr int kBtnLeftStick = 9;
+constexpr int kBtnRightStick = 10;
 } // namespace ioc
 
 namespace dc
 {
-constexpr int MOTORS_LEFT = 0;
-constexpr int MOTORS_RIGHT = 1;
+constexpr int kMotorsLeft = 0;
+constexpr int kMotorsRight = 1;
 } // namespace dc
 
 namespace ec
 {
-constexpr int MOTOR_EJECTION = 2;
-constexpr int MOTOR_GRIPPERS_LEFT = 6;
-constexpr int MOTOR_GRIPPERS_RIGHT = 7;
+constexpr int kMotorEjection = 2;
+constexpr int kMotorGrippers[] = {6, 7};
 } // namespace ec
 
 namespace tc
 {
-constexpr int MOTOR_TELESCOPE = 3;
+constexpr int kMotorTelescope = 3;
 } // namespace tc
 
 namespace ac
 {
-constexpr int MOTOR_ASCENSION = 4;
+constexpr int kMotorAscension = 4;
 } // namespace ac
 
 namespace gc
 {
-constexpr int MOTOR_GATHERING = 5;
-constexpr int SERVO_PORTS[] = {8, 9};
-constexpr int SERVO_STATE_PRESS = 0;
-constexpr int SERVO_STATE_RELEASE = 1;
+constexpr int kMotorGathering = 5;
+constexpr int kServoPorts[] = {8, 9};
 } // namespace gc

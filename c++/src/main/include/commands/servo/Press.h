@@ -16,11 +16,7 @@
 
 #include "subsystems/GatheringSubsystem.h"
 
-using namespace gc;
-using namespace frc;
-using namespace frc2;
-
-class Press : public CommandHelper<CommandBase, Press>, frc::TimedRobot
+class Press : public frc2::CommandHelper<frc2::CommandBase, Press>
 {
 public:
 	Press(GatheringSubsystem *subsystem);
@@ -32,5 +28,4 @@ public:
 
 private:
 	GatheringSubsystem *m_subsystem;
-	frc::Timer m_timer;
 };

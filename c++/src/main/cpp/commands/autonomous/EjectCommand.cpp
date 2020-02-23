@@ -5,25 +5,30 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-#include "commands/servo/Press.h"
+#include "commands/autonomous/EjectCommand.h"
 
-Press::Press(GatheringSubsystem *subsystem) : m_subsystem{subsystem}
+EjectCommand::EjectCommand(EjectionSubsystem *subsystem) : m_subsystem{subsystem}
 {
+	m_timeout = 2.0;
+
 	AddRequirements({subsystem});
 }
 
-void Press::Initialize()
+void EjectCommand::Initialize()
 {
+	m_subsystem->Stop();
+	m_timer.Reset();
+	m_timer.Start();
 }
 
-void Press::Execute()
+void EjectCommand::Execute()
 {
-	m_subsystem->PressServos();
+	m_subsystem->Eject();
 }
 
-void Press::End(bool interrupted)
+void EjectCommand::End(bool interrupted)
 {
-	m_subsystem->StopServos();
+	m_subsystem->Stop();
 }
 
-bool Press::IsFinished() { return false; }
+bool EjectCommand::IsFinished() { return (double)m_timer.Get() >= m_timeout; }

@@ -11,14 +11,9 @@
 #include <frc2/command/CommandHelper.h>
 
 #include "Constants.h"
-
 #include "subsystems/GatheringSubsystem.h"
 
-using namespace gc;
-using namespace frc;
-using namespace frc2;
-
-class Release : public CommandHelper<CommandBase, Release>
+class Release : public frc2::CommandHelper<frc2::CommandBase, Release>
 {
 public:
 	Release(GatheringSubsystem *subsystem);

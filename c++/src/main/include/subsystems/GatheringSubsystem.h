@@ -14,11 +14,7 @@
 
 #include "Constants.h"
 
-using namespace gc;
-using namespace frc;
-using namespace frc2;
-
-class GatheringSubsystem : public SubsystemBase
+class GatheringSubsystem : public frc2::SubsystemBase
 {
 public:
 	GatheringSubsystem();
@@ -30,11 +26,10 @@ public:
 	void StopServos();
 	void PressServos();
 	void ReleaseServos();
-	bool IsServoFinished(int state);
 
 private:
-	Servo m_servoLeft{SERVO_PORTS[0]};
-	Servo m_servoRight{SERVO_PORTS[1]};
+	frc::PWMVictorSPX m_motor;
 
-	PWMVictorSPX m_motor{MOTOR_GATHERING};
+	frc::Servo m_servoLeft;
+	frc::Servo m_servoRight;
 };

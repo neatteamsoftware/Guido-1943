@@ -7,25 +7,25 @@
 
 #pragma once
 
-#include <frc/PWMVictorSPX.h>
-#include <frc/XboxController.h>
-#include <frc2/command/SubsystemBase.h>
+#include <frc2/Timer.h>
+#include <frc2/command/CommandBase.h>
+#include <frc2/command/CommandHelper.h>
 
-#include "Constants.h"
+#include "subsystems/EjectionSubsystem.h"
 
-class EjectionSubsystem : public frc2::SubsystemBase
+class EjectCommand : public frc2::CommandHelper<frc2::CommandBase, EjectCommand>
 {
 public:
-	EjectionSubsystem(frc::XboxController *controller);
+	EjectCommand(EjectionSubsystem *subsystem);
 
-	void Run();
-	void Stop();
-	void Eject();
+	void Initialize() override;
+	void Execute() override;
+	void End(bool interrupted) override;
+	bool IsFinished() override;
 
 private:
-	frc::XboxController *m_controller;
+	double m_timeout;
 
-	frc::PWMVictorSPX m_motorStrip;
-	frc::PWMVictorSPX m_motorGripperLeft;
-	frc::PWMVictorSPX m_motorGripperRight;
+	frc2::Timer m_timer;
+	EjectionSubsystem *m_subsystem;
 };

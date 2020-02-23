@@ -7,23 +7,22 @@
 
 #pragma once
 
+#include <cmath>
 #include <frc/PWMVictorSPX.h>
 #include <frc/XboxController.h>
 #include <frc2/command/SubsystemBase.h>
 
 #include "Constants.h"
 
-using namespace tc;
-using namespace frc;
-using namespace frc2;
-
-class TelescopeSubsystem : public SubsystemBase
+class TelescopeSubsystem : public frc2::SubsystemBase
 {
 public:
-	TelescopeSubsystem(XboxController *controller);
+	TelescopeSubsystem(frc::XboxController *controller);
+
 	void Run();
 
 private:
-	XboxController *m_controller;
-	PWMVictorSPX m_motor{MOTOR_TELESCOPE};
+	frc::XboxController *m_controller;
+
+	frc::PWMVictorSPX m_motor;
 };

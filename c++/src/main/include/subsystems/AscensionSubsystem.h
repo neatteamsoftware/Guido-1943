@@ -12,11 +12,7 @@
 
 #include "Constants.h"
 
-using namespace ac;
-using namespace frc;
-using namespace frc2;
-
-class AscensionSubsystem : public SubsystemBase
+class AscensionSubsystem : public frc2::SubsystemBase
 {
 public:
 	AscensionSubsystem();
@@ -26,5 +22,5 @@ public:
 	void Stop();
 
 private:
-	PWMVictorSPX m_motor{MOTOR_ASCENSION};
+	frc::PWMVictorSPX m_motor;
 };

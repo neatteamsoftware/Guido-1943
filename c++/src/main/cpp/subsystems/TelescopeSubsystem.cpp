@@ -7,9 +7,17 @@
 
 #include "subsystems/TelescopeSubsystem.h"
 
-TelescopeSubsystem::TelescopeSubsystem(XboxController *controller) : m_controller{controller} {}
+TelescopeSubsystem::TelescopeSubsystem(frc::XboxController *controller)
+	: m_controller{controller},
+	  m_motor{tc::kMotorTelescope}
+{
+}
 
 void TelescopeSubsystem::Run()
 {
-	m_motor.Set(m_controller->GetY(GenericHID::JoystickHand::kRightHand) * 0.5);
+	double value = m_controller->GetY(frc::GenericHID::JoystickHand::kRightHand);
+	if (abs(value) > 0.1)
+		m_motor.Set(value);
+	else
+		m_motor.Set(0);
 }

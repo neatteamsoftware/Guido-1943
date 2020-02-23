@@ -7,18 +7,25 @@
 
 #pragma once
 
+#include <cameraserver/CameraServer.h>
+
 #include <frc/XboxController.h>
 #include <frc/shuffleboard/Shuffleboard.h>
 #include <frc/smartdashboard/SendableChooser.h>
 
 #include <frc2/command/Command.h>
 #include <frc2/command/RunCommand.h>
+#include <frc2/command/ParallelCommandGroup.h>
 #include <frc2/command/button/JoystickButton.h>
+#include <frc2/command/SequentialCommandGroup.h>
 
 #include "Constants.h"
 
 #include "commands/servo/Press.h"
 #include "commands/servo/Release.h"
+#include "commands/autonomous/EjectCommand.h"
+#include "commands/autonomous/DriveTimeCommand.h"
+#include "commands/autonomous/DropGrippersCommand.h"
 
 #include "subsystems/DriveSubsystem.h"
 #include "subsystems/EjectionSubsystem.h"
@@ -26,31 +33,27 @@
 #include "subsystems/GatheringSubsystem.h"
 #include "subsystems/TelescopeSubsystem.h"
 
-using namespace ioc;
-using namespace frc;
-using namespace frc2;
-
 class RobotContainer
 {
 public:
 	RobotContainer();
 
 	void ResetServosOnInit();
-	Command *GetAutonomousCommand();
+	frc2::Command *GetAutonomousCommand();
 
 private:
-	XboxController m_controller{CONTROLLER_PORT};
+	frc::XboxController m_controller;
 
-	DriveSubsystem m_driveSubsystem{&m_controller};
-	EjectionSubsystem m_ejectionSubsystem{&m_controller};
+	DriveSubsystem m_driveSubsystem;
+	EjectionSubsystem m_ejectionSubsystem;
 	AscensionSubsystem m_ascensionSubsystem;
 	GatheringSubsystem m_gatheringSubsystem;
-	TelescopeSubsystem m_telescopeSubsystem{&m_controller};
+	TelescopeSubsystem m_telescopeSubsystem;
 
-	Press m_servoPressCommand{&m_gatheringSubsystem};
-	Release m_servoReleaseCommand{&m_gatheringSubsystem};
+	Press m_servoPressCommand;
+	Release m_servoReleaseCommand;
 
-	SendableChooser<Command *> m_chooser;
+	frc::SendableChooser<frc2::Command *> m_chooser;
 
 	bool m_toggleServo = true;
 

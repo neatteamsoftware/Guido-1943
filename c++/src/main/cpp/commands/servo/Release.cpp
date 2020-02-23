@@ -9,9 +9,12 @@
 
 Release::Release(GatheringSubsystem *subsystem) : m_subsystem{subsystem}
 {
+	AddRequirements({subsystem});
 }
 
-void Release::Initialize() {}
+void Release::Initialize()
+{
+}
 
 void Release::Execute()
 {
@@ -23,4 +26,4 @@ void Release::End(bool interrupted)
 	m_subsystem->StopServos();
 }
 
-bool Release::IsFinished() { return m_subsystem->IsServoFinished(SERVO_STATE_RELEASE); }
+bool Release::IsFinished() { return false; }

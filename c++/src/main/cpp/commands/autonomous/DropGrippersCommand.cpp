@@ -5,25 +5,30 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-#include "commands/servo/Press.h"
+#include "commands/autonomous/DropGrippersCommand.h"
 
-Press::Press(GatheringSubsystem *subsystem) : m_subsystem{subsystem}
+DropGrippersCommand::DropGrippersCommand(GatheringSubsystem *subsystem) : m_subsystem{subsystem}
 {
+	m_timeout = 1.5;
+
 	AddRequirements({subsystem});
 }
 
-void Press::Initialize()
+void DropGrippersCommand::Initialize()
 {
+	m_subsystem->Stop();
+	m_timer.Reset();
+	m_timer.Start();
 }
 
-void Press::Execute()
+void DropGrippersCommand::Execute()
 {
-	m_subsystem->PressServos();
+	m_subsystem->TakeOut();
 }
 
-void Press::End(bool interrupted)
+void DropGrippersCommand::End(bool interrupted)
 {
-	m_subsystem->StopServos();
+	m_subsystem->Stop();
 }
 
-bool Press::IsFinished() { return false; }
+bool DropGrippersCommand::IsFinished() { return (double)m_timer.Get() >= m_timeout; }

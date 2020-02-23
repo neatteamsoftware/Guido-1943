@@ -7,19 +7,19 @@
 
 #include "subsystems/AscensionSubsystem.h"
 
-AscensionSubsystem::AscensionSubsystem() {}
+AscensionSubsystem::AscensionSubsystem() : m_motor{ac::kMotorAscension} {}
 
 void AscensionSubsystem::Ascend()
 {
-	m_motor.Set(1);
+	m_motor.Set(1.0);
 }
 
 void AscensionSubsystem::Descend()
 {
-	m_motor.Set(-1);
+	m_motor.Set(-1.0);
 }
 
 void AscensionSubsystem::Stop()
 {
-	m_motor.Set(0);
+	m_motor.Set(0.0);
 }

@@ -7,27 +7,26 @@
 
 #include "subsystems/GatheringSubsystem.h"
 
-#include <iostream>
-
-using namespace std;
-
 GatheringSubsystem::GatheringSubsystem()
+	: m_motor{gc::kMotorGathering},
+	  m_servoLeft{gc::kServoPorts[0]},
+	  m_servoRight{gc::kServoPorts[1]}
 {
 }
 
 void GatheringSubsystem::TakeIn()
 {
-	m_motor.Set(-0.5);
+	m_motor.Set(-0.6);
 }
 
 void GatheringSubsystem::TakeOut()
 {
-	m_motor.Set(0.5);
+	m_motor.Set(0.6);
 }
 
 void GatheringSubsystem::Stop()
 {
-	m_motor.Set(0);
+	m_motor.Set(0.0);
 }
 
 void GatheringSubsystem::StopServos()
@@ -39,16 +38,11 @@ void GatheringSubsystem::StopServos()
 void GatheringSubsystem::PressServos()
 {
 	m_servoLeft.Set(0.7);
-	m_servoRight.Set(0.6);
+	m_servoRight.Set(1.1);
 }
 
 void GatheringSubsystem::ReleaseServos()
 {
 	m_servoLeft.Set(0.1);
-	m_servoRight.Set(0.1);
-}
-
-bool GatheringSubsystem::IsServoFinished(int state)
-{
-	return false;
+	m_servoRight.Set(0.4);
 }

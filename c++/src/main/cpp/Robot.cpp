@@ -7,20 +7,11 @@
 
 #include "Robot.h"
 
-#include <frc/smartdashboard/SmartDashboard.h>
-#include <frc2/command/CommandScheduler.h>
+void Robot::RobotInit() {}
 
-void Robot::RobotInit()
-{
-	m_container.ResetServosOnInit();
-}
+void Robot::RobotPeriodic() { frc2::CommandScheduler::GetInstance().Run(); }
 
-void Robot::RobotPeriodic() { CommandScheduler::GetInstance().Run(); }
-
-void Robot::DisabledInit()
-{
-	m_container.ResetServosOnInit();
-}
+void Robot::DisabledInit() {}
 
 void Robot::DisabledPeriodic() {}
 
@@ -50,6 +41,6 @@ void Robot::TestPeriodic() {}
 #ifndef RUNNING_FRC_TESTS
 int main()
 {
-	return StartRobot<Robot>();
+	return frc::StartRobot<Robot>();
 }
 #endif

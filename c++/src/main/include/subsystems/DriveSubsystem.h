@@ -10,29 +10,26 @@
 #include <frc/PWMVictorSPX.h>
 #include <frc/XboxController.h>
 #include <frc/drive/DifferentialDrive.h>
-
 #include <frc2/command/SubsystemBase.h>
 
 #include "Constants.h"
 
-using namespace dc;
-using namespace frc;
-using namespace frc2;
-
-class DriveSubsystem : public SubsystemBase
+class DriveSubsystem : public frc2::SubsystemBase
 {
 public:
-	DriveSubsystem(XboxController *controller);
+	DriveSubsystem(frc::XboxController *controller);
 
 	void ArcadeDrive();
+	void TankDrive();
 	void ArcadeDrive(double mag, double rot);
+	void TankDrive(double left, double right);
 	void SetMaxOutput(double max);
 
 private:
-	XboxController *m_controller;
+	frc::XboxController *m_controller;
 
-	PWMVictorSPX motorsLeft{MOTORS_LEFT};
-	PWMVictorSPX motorsRight{MOTORS_RIGHT};
+	frc::PWMVictorSPX m_motorsLeft;
+	frc::PWMVictorSPX m_motorsRight;
 
-	DifferentialDrive m_robotDrive{motorsLeft, motorsRight};
+	frc::DifferentialDrive m_robotDrive;
 };

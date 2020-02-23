@@ -7,12 +7,25 @@
 
 #include "subsystems/DriveSubsystem.h"
 
-DriveSubsystem::DriveSubsystem(XboxController *controller) : m_controller{controller} {}
+DriveSubsystem::DriveSubsystem(frc::XboxController *controller)
+	: m_controller{controller},
+	  m_motorsLeft{dc::kMotorsLeft},
+	  m_motorsRight{dc::kMotorsRight},
+	  m_robotDrive{m_motorsLeft, m_motorsRight}
+{
+}
 
 void DriveSubsystem::ArcadeDrive()
 {
-	m_robotDrive.ArcadeDrive(-m_controller->GetY(GenericHID::JoystickHand::kLeftHand),
-							 m_controller->GetX(GenericHID::JoystickHand::kLeftHand));
+	m_robotDrive.ArcadeDrive(-m_controller->GetY(frc::GenericHID::JoystickHand::kLeftHand),
+							 m_controller->GetX(frc::GenericHID::JoystickHand::kLeftHand),
+							 m_controller->GetRawButtonPressed(ioc::kBtnLeftStick));
+}
+
+void DriveSubsystem::TankDrive()
+{
+	m_robotDrive.TankDrive(m_controller->GetY(frc::GenericHID::JoystickHand::kLeftHand),
+						   m_controller->GetY(frc::GenericHID::JoystickHand::kRightHand));
 }
 
 void DriveSubsystem::ArcadeDrive(double mag, double rot)
@@ -20,7 +33,12 @@ void DriveSubsystem::ArcadeDrive(double mag, double rot)
 	m_robotDrive.ArcadeDrive(mag, rot);
 }
 
-void DriveSubsystem::SetMaxOutput(double max)
+void DriveSubsystem::TankDrive(double left, double right)
 {
-	m_robotDrive.SetMaxOutput(max);
+	m_robotDrive.TankDrive(left, right);
+}
+
+void DriveSubsystem::SetMaxOutput(double maxOutput)
+{
+	m_robotDrive.SetMaxOutput(maxOutput);
 }

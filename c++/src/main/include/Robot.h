@@ -9,13 +9,12 @@
 
 #include <frc/TimedRobot.h>
 #include <frc2/command/Command.h>
+#include <frc/smartdashboard/SmartDashboard.h>
+#include <frc2/command/CommandScheduler.h>
 
 #include "RobotContainer.h"
 
-using namespace frc;
-using namespace frc2;
-
-class Robot : public TimedRobot
+class Robot : public frc::TimedRobot
 {
 public:
 	void RobotInit() override;
@@ -29,7 +28,7 @@ public:
 	void TestPeriodic() override;
 
 private:
-	Command *m_autonomousCommand = nullptr;
+	frc2::Command *m_autonomousCommand = nullptr;
 
 	RobotContainer m_container;
 };
