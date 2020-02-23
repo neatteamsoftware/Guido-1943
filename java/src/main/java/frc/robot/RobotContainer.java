@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -15,102 +16,124 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.PressCommand;
 import frc.robot.commands.ReleaseCommand;
+import frc.robot.commands.autonomous.CrossLineCommandGroup;
+import frc.robot.commands.autonomous.DriveAutonomousCommand;
 import frc.robot.subsystems.*;
 
 import static frc.robot.Constants.IOC;
 
 public class RobotContainer {
 
-    private static XboxController controller;
+	private static XboxController controller;
 
-    private static DriveSubsystem driveSubsystem;
-    private static EjectionSubsystem ejectionSubsystem;
-    private static AscensionSubsystem ascensionSubsystem;
-    private static GatheringSubsystem gatheringSubsystem;
-    private static TelescopeSubsystem telescopeSubsystem;
+	private static DriveSubsystem driveSubsystem;
+	private static EjectionSubsystem ejectionSubsystem;
+	private static AscensionSubsystem ascensionSubsystem;
+	private static GatheringSubsystem gatheringSubsystem;
+	private static TelescopeSubsystem telescopeSubsystem;
 
-    private static SendableChooser<Command> chooser;
+	private static SendableChooser<Command> chooser;
 
-    private final PressCommand servoPressCommand;
-    private final ReleaseCommand servoReleaseCommand;
+	private final PressCommand servoPressCommand;
+	private final ReleaseCommand servoReleaseCommand;
+	private final CrossLineCommandGroup autonomousLine;
+	private final CrossLineCommandGroup autonomousLineEject;
 
-    private boolean servoToggle;
+	private boolean servoToggle;
 
-    public RobotContainer() {
-        controller = new XboxController(IOC.CONTROLLER_PORT);
+	public RobotContainer() {
+		controller = new XboxController(IOC.CONTROLLER_PORT);
 
-        driveSubsystem = new DriveSubsystem();
-        ejectionSubsystem = new EjectionSubsystem();
-        ascensionSubsystem = new AscensionSubsystem();
-        gatheringSubsystem = new GatheringSubsystem();
-        telescopeSubsystem = new TelescopeSubsystem();
+		driveSubsystem = new DriveSubsystem();
+		ejectionSubsystem = new EjectionSubsystem();
+		ascensionSubsystem = new AscensionSubsystem();
+		gatheringSubsystem = new GatheringSubsystem();
+		telescopeSubsystem = new TelescopeSubsystem();
 
-        chooser = new SendableChooser<>();
+		chooser = new SendableChooser<>();
 
-        servoPressCommand = new PressCommand(gatheringSubsystem);
-        servoReleaseCommand = new ReleaseCommand(gatheringSubsystem);
+		servoPressCommand = new PressCommand(gatheringSubsystem);
+		servoReleaseCommand = new ReleaseCommand(gatheringSubsystem);
+		autonomousLine = new CrossLineCommandGroup(driveSubsystem, ejectionSubsystem, gatheringSubsystem, true);
+		autonomousLineEject = new CrossLineCommandGroup(driveSubsystem, ejectionSubsystem, gatheringSubsystem, false);
 
-        servoToggle = true;
+		servoToggle = true;
 
-        configureAutonomous();
-        configureButtonBindings();
-        configureCommands();
-    }
+		CameraServer.getInstance().startAutomaticCapture(0);
+		CameraServer.getInstance().startAutomaticCapture(1);
 
-    private void configureAutonomous() {
-        chooser.addOption("No Autonomous", null);
-        chooser.addOption("Example Autonomous", null);  // temp
+		configureAutonomous();
+		configureButtonBindings();
+		configureCommands();
+	}
 
-        Shuffleboard.getTab("Autonomous").add(chooser);
-    }
+	private void configureAutonomous() {
+		chooser.addOption("No Autonomous", null);
+		chooser.addOption("Line", autonomousLine);
+		chooser.addOption("Line & Eject", autonomousLineEject);
 
-    private void configureButtonBindings() {
-        JoystickButton btnA = new JoystickButton(controller, IOC.BTN_A);
-        JoystickButton btnB = new JoystickButton(controller, IOC.BTN_B);
-        JoystickButton btnX = new JoystickButton(controller, IOC.BTN_X);
-        JoystickButton btnY = new JoystickButton(controller, IOC.BTN_Y);
-        JoystickButton btnHome = new JoystickButton(controller, IOC.BTN_HOME);
+		Shuffleboard.getTab("Autonomous").add(chooser);
+	}
 
-        btnA.whenPressed(() -> {
-            servoPressCommand.cancel();
-            servoReleaseCommand.schedule();
-            servoToggle = true;
-        }).whileHeld(gatheringSubsystem::takeIn).whenReleased(() -> {
-            gatheringSubsystem.stop();
-            servoPressCommand.start(true);
-            servoReleaseCommand.cancel();
-            servoToggle = false;
-        });
+	private void configureButtonBindings() {
+		JoystickButton btnA = new JoystickButton(controller, IOC.BTN_A);
+		JoystickButton btnB = new JoystickButton(controller, IOC.BTN_B);
+		JoystickButton btnX = new JoystickButton(controller, IOC.BTN_X);
+		JoystickButton btnY = new JoystickButton(controller, IOC.BTN_Y);
+		JoystickButton btnHome = new JoystickButton(controller, IOC.BTN_HOME);
 
-        btnB.whileHeld(gatheringSubsystem::takeOut).whenReleased(gatheringSubsystem::stop);
+		btnA.whenPressed(() -> {
+			servoPressCommand.cancel();
+			servoReleaseCommand.schedule();
+			servoToggle = true;
+		}).whileHeld(() -> {
+			gatheringSubsystem.takeIn();
+			ejectionSubsystem.setGathering(true);
+		}).whenReleased(() -> {
+			gatheringSubsystem.stop();
+			ejectionSubsystem.setGathering(false);
+			servoPressCommand.start(true);
+			servoReleaseCommand.cancel();
+			servoToggle = false;
+		});
 
-        btnX.whenPressed(() -> {
-            if (servoToggle) {
-                servoPressCommand.start(false);
-                servoReleaseCommand.cancel();
-                servoToggle = false;
-            } else {
-                servoPressCommand.cancel();
-                servoReleaseCommand.schedule();
-                servoToggle = true;
-            }
-        });
+		btnB.whileHeld(gatheringSubsystem::takeOut).whenReleased(gatheringSubsystem::stop);
 
-        btnY.whileHeld(() -> { ascensionSubsystem.ascend(); }).whenReleased(() -> { ascensionSubsystem.stop(); });
-        btnHome.whileHeld(() -> { ascensionSubsystem.descend(); }).whenReleased(() -> { ascensionSubsystem.stop(); });
-    }
+		btnX.whenPressed(() -> {
+			if (servoToggle) {
+				servoPressCommand.start(false);
+				servoReleaseCommand.cancel();
+				servoToggle = false;
+			} else {
+				servoPressCommand.cancel();
+				servoReleaseCommand.schedule();
+				servoToggle = true;
+			}
+		});
 
-    private void configureCommands() {
-        driveSubsystem.setDefaultCommand(new RunCommand(driveSubsystem::arcadeDrive, driveSubsystem));
-        ejectionSubsystem.setDefaultCommand(new RunCommand(ejectionSubsystem::run, ejectionSubsystem));
-        telescopeSubsystem.setDefaultCommand(new RunCommand(telescopeSubsystem::run, telescopeSubsystem));
-    }
+		btnY.whileHeld(() -> {
+			ascensionSubsystem.ascend();
+		}).whenReleased(() -> {
+			ascensionSubsystem.stop();
+		});
+		btnHome.whileHeld(() -> {
+			ascensionSubsystem.descend();
+		}).whenReleased(() -> {
+			ascensionSubsystem.stop();
+		});
+	}
 
-    public Command getAutonomousCommand() {
-        return chooser.getSelected();
-    }
+	private void configureCommands() {
+		driveSubsystem.setDefaultCommand(new RunCommand(driveSubsystem::arcadeDrive, driveSubsystem));
+		ejectionSubsystem.setDefaultCommand(new RunCommand(ejectionSubsystem::run, ejectionSubsystem));
+		telescopeSubsystem.setDefaultCommand(new RunCommand(telescopeSubsystem::run, telescopeSubsystem));
+	}
 
-    public static XboxController getController() {
-        return controller;
-    }
+	public Command getAutonomousCommand() {
+		return chooser.getSelected();
+	}
+
+	public static XboxController getController() {
+		return controller;
+	}
 }

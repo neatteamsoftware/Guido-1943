@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-
 import edu.wpi.first.wpilibj.PWMVictorSPX;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -11,14 +10,17 @@ import static frc.robot.Constants.TC;
 
 public class TelescopeSubsystem extends SubsystemBase {
 
-    private final PWMVictorSPX motor;
+	private final PWMVictorSPX motor;
 
-    public TelescopeSubsystem() {
-        motor = new PWMVictorSPX(TC.MOTOR_TELESCOPE);
-    }
+	public TelescopeSubsystem() {
+		motor = new PWMVictorSPX(TC.MOTOR_TELESCOPE);
+	}
 
-    public void run() {
-        XboxController controller = RobotContainer.getController();
-        motor.set(controller.getY(Hand.kRight));
-    }
+	public void run() {
+		XboxController controller = RobotContainer.getController();
+		if (Math.abs(controller.getY(Hand.kRight)) > 0.1)
+			motor.set(controller.getY(Hand.kRight));
+		else
+			motor.set(0);
+	}
 }

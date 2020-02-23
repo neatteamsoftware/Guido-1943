@@ -21,40 +21,39 @@ import static frc.robot.Constants.DC;
 
 public class DriveSubsystem extends SubsystemBase {
 
+	private final DifferentialDrive robotDrive;
 
-    private final DifferentialDrive robotDrive;
+	public DriveSubsystem() {
+		PWMVictorSPX leftMotors = new PWMVictorSPX(DC.MOTORS_LEFT);
+		PWMVictorSPX rightMotors = new PWMVictorSPX(DC.MOTORS_RIGHT);
 
-    public DriveSubsystem() {
-        PWMVictorSPX leftMotors = new PWMVictorSPX(DC.MOTORS_LEFT);
-        PWMVictorSPX rightMotors = new PWMVictorSPX(DC.MOTORS_RIGHT);
+		robotDrive = new DifferentialDrive(leftMotors, rightMotors);
+	}
 
-        robotDrive = new DifferentialDrive(leftMotors, rightMotors);
-    }
+	public void arcadeDrive() {
+		XboxController controller = RobotContainer.getController();
+		robotDrive.arcadeDrive(-controller.getY(Hand.kLeft), controller.getX(Hand.kLeft),
+				controller.getRawButtonPressed(IOC.BTN_LEFT_STICK));
 
-    public void arcadeDrive() {
-        XboxController controller = RobotContainer.getController();
-        robotDrive.arcadeDrive(-controller.getY(Hand.kLeft), controller.getX(Hand.kLeft), controller.getRawButtonPressed(IOC.BTN_LEFT_STICK));
-        // tank drive
+		// tank drive
+		// robotDrive.tankDrive(-controller.getY(Hand.kLeft),
+		// -controller.getY(Hand.kRight));
+	}
 
+	public void arcadeDrive(double mag, double rot) {
+		robotDrive.arcadeDrive(mag, rot);
+	}
 
+	public void tankDrive() {
+		XboxController controller = RobotContainer.getController();
+		robotDrive.tankDrive(controller.getY(Hand.kLeft), controller.getY(Hand.kRight));
+	}
 
-        // robotDrive.tankDrive(-controller.getY(Hand.kLeft), -controller.getY(Hand.kRight));
-    }
+	public void tankDrive(double left, double right) {
+		robotDrive.tankDrive(left, right);
+	}
 
-    public void arcadeDrive(double mag, double rot) {
-        robotDrive.arcadeDrive(mag, rot);
-    }
-
-    public void tankDrive() {
-        XboxController controller = RobotContainer.getController();
-        robotDrive.tankDrive(controller.getY(Hand.kLeft), controller.getY(Hand.kRight));
-    }
-
-    public void tankDrive(double left, double right) {
-        robotDrive.tankDrive(left, right);
-    }
-
-    public void setMaxOutput(double maxOutput) {
-        robotDrive.setMaxOutput(maxOutput);
-    }
+	public void setMaxOutput(double maxOutput) {
+		robotDrive.setMaxOutput(maxOutput);
+	}
 }
